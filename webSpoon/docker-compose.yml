@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  neo:
+    image: neo4j:latest
+    environment:
+      - "NEO4J_AUTH=neo4j/7BOHy2ASDt7&"
+      - "NEO4J_dbms_memory_heap_max__size=4g"
+      - "NEO4J_dbms_memory_pagecache_size=2g"
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    networks: 
+      - mariadbForSpoon
+  webspoon:
+    depends_on:
+      - neo
+    image: mattcasters/webspoon-neo4j:latest
+    environment:
+     - "JAVA_OPTS=-Xms12g -Xmx12g -DNEO4J_LOGGING_CONNECTION=Demo"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./files:/home/files # put your files here on ./files to see on /Home/files
+      - ./lib:/usr/local/tomcat/lib # put your drivers here on ./lib to see on /usr/local/tomcat/lib
+    links:
+      - neo
+    networks: 
+      - mariadbForSpoon
+networks:
+  mariadbForSpoon:
+    name: mariadbForSpoon
+    driver: "bridge"
+    external: true
+
