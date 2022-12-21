@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+  db:
+    image: mariadb
+    restart: always
+    container_name: mariaDB
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+    - 3306:3306
+    volumes: 
+        - ./init:/docker-entrypoint-initdb.d
+    networks: 
+      - mariadbForSpoon
+  adminer:
+    image: adminer
+    container_name: adminer_mariaDB
+    restart: always
+    ports:
+      - 8082:8080
+    networks: 
+      - mariadbForSpoon
+
+networks:
+  mariadbForSpoon:
+    name: mariadbForSpoon
+    driver: "bridge"
+    external: true
